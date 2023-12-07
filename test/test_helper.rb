@@ -40,6 +40,12 @@ require "support/push_server_mock"
 require "ddtrace/auto_instrument"
 require "datadog/ci"
 
+Datadog.configure do |c|
+  c.service = "feedbin"
+  c.ci.enabled = true
+  c.ci.instrument :minitest
+end
+
 ActiveRecord::FixtureSet.context_class.send :include, LoginHelper
 StripeMock.webhook_fixture_path = "./test/fixtures/stripe_webhooks/"
 WebMock.disable_net_connect!(allow_localhost: true, allow: "citestcycle-intake.datadoghq.eu")
@@ -160,10 +166,4 @@ class ActiveSupport::TestCase
       "List-Unsubscribe" => "<http://www.host.com/list.cgi?cmd=unsub&lst=list>, <mailto:list-request@host.com?subject=unsubscribe>"
     }
   end
-end
-
-Datadog.configure do |c|
-  c.service = "feedbin"
-  c.ci.enabled = true
-  c.ci.instrument :minitest
 end
