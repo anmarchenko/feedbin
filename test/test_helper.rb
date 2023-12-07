@@ -37,8 +37,8 @@ require "support/api_controller_test_case"
 require "support/push_server_mock"
 
 # datadog instrumentation
-require "datadog/ci"
 require "ddtrace/auto_instrument"
+require "datadog/ci"
 
 ActiveRecord::FixtureSet.context_class.send :include, LoginHelper
 StripeMock.webhook_fixture_path = "./test/fixtures/stripe_webhooks/"
