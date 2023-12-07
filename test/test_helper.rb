@@ -36,6 +36,10 @@ require "support/assertions"
 require "support/api_controller_test_case"
 require "support/push_server_mock"
 
+# datadog instrumentation
+require "datadog/ci"
+require "ddtrace/auto_instrument"
+
 ActiveRecord::FixtureSet.context_class.send :include, LoginHelper
 StripeMock.webhook_fixture_path = "./test/fixtures/stripe_webhooks/"
 WebMock.disable_net_connect!(allow_localhost: true)
@@ -91,7 +95,6 @@ class ActiveSupport::TestCase
       </CopyObjectResult>
     EOT
   end
-
 
   def stub_request_file(file, url, response_options = {})
     options = {body: File.new(support_file(file)), status: 200}.merge(response_options)
@@ -157,4 +160,10 @@ class ActiveSupport::TestCase
       "List-Unsubscribe" => "<http://www.host.com/list.cgi?cmd=unsub&lst=list>, <mailto:list-request@host.com?subject=unsubscribe>"
     }
   end
+end
+
+Datadog.configure do |c|
+  c.service = "feedbin"
+  c.ci.enabled = true
+  c.ci.instrument :minitest
 end
