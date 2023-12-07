@@ -1,4 +1,16 @@
 GIT
+  remote: https://github.com/DataDog/dd-trace-rb.git
+  revision: 22c03703a37362cfc930388f659cda4fde8fc60e
+  ref: master
+  specs:
+    ddtrace (1.18.0)
+      datadog-ci (~> 0.5.0)
+      debase-ruby_core_source (= 3.2.3)
+      libdatadog (~> 5.0.0.1.0)
+      libddwaf (~> 1.14.0.0.0)
+      msgpack
+
+GIT
   remote: https://github.com/feedbin/carrierwave.git
   revision: 3cefc38b31e079da24f3e372c243b7132ba59708
   branch: feedbin
@@ -111,6 +123,12 @@ GIT
       rack-test (>= 0.6.3)
       regexp_parser (>= 1.5, < 3.0)
       xpath (~> 3.2)
+
+PATH
+  remote: ../datadog-ci-rb
+  specs:
+    datadog-ci (0.5.0)
+      msgpack
 
 GEM
   remote: https://rubygems.org/
@@ -236,6 +254,7 @@ GEM
       addressable
     dante (0.2.0)
     date (3.3.4)
+    debase-ruby_core_source (3.2.3)
     debug (1.8.0)
       irb (>= 1.5.0)
       reline (>= 0.3.1)
@@ -346,6 +365,14 @@ GEM
     jwt (2.7.1)
     kgio (2.11.4)
     language_server-protocol (3.17.0.3)
+    libdatadog (5.0.0.1.0)
+    libdatadog (5.0.0.1.0-x86_64-linux)
+    libddwaf (1.14.0.0.0-arm64-darwin)
+      ffi (~> 1.0)
+    libddwaf (1.14.0.0.0-x86_64-darwin)
+      ffi (~> 1.0)
+    libddwaf (1.14.0.0.0-x86_64-linux)
+      ffi (~> 1.0)
     librato-metrics (1.6.2)
       aggregate (~> 0.2.2)
       faraday (>= 0.7, < 2.0)
@@ -396,7 +423,6 @@ GEM
     mime-types-data (3.2023.1003)
     mini_magick (4.12.0)
     mini_mime (1.1.5)
-    mini_portile2 (2.8.5)
     minitest (5.20.0)
     minitest-stub-const (0.6)
     minitest-stub_any_instance (1.0.3)
@@ -686,6 +712,8 @@ DEPENDENCIES
   clockwork
   coffee-rails
   connection_pool
+  datadog-ci!
+  ddtrace!
   debug
   dotenv-rails
   down

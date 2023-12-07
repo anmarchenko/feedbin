@@ -93,5 +93,8 @@ group :development, :test do
   gem "selenium-webdriver"
   gem "standard"
   gem "webmock", "= 3.8.0"
-end
 
+  # datadog observability
+  gem "ddtrace", github: "DataDog/dd-trace-rb", ref: "master"
+  gem "datadog-ci", path: "../datadog-ci-rb"
+end
