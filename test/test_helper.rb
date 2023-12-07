@@ -37,13 +37,16 @@ require "support/api_controller_test_case"
 require "support/push_server_mock"
 
 # datadog instrumentation
-require "ddtrace/auto_instrument"
 require "datadog/ci"
 
 Datadog.configure do |c|
   c.service = "feedbin"
   c.ci.enabled = true
   c.ci.instrument :minitest
+
+  c.tracing.instrument :rails
+  c.tracing.instrument :redis
+  c.tracing.instrument :elasticsearch
 end
 
 ActiveRecord::FixtureSet.context_class.send :include, LoginHelper
