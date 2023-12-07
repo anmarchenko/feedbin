@@ -42,7 +42,7 @@ require "ddtrace/auto_instrument"
 
 ActiveRecord::FixtureSet.context_class.send :include, LoginHelper
 StripeMock.webhook_fixture_path = "./test/fixtures/stripe_webhooks/"
-WebMock.disable_net_connect!(allow_localhost: true)
+WebMock.disable_net_connect!(allow_localhost: true, allow: "citestcycle-intake.datadoghq.eu")
 Sidekiq.logger.level = Logger::WARN
 
 class ActiveSupport::TestCase
