@@ -46,6 +46,9 @@ Datadog.configure do |c|
 
   c.tracing.instrument :rails
   c.tracing.instrument :redis
+  c.tracing.instrument :pg
+  c.tracing.instrument :active_record
+  c.tracing.instrument :active_job
   c.tracing.instrument :elasticsearch
 end
 
