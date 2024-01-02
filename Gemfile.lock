@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/DataDog/dd-trace-rb.git
-  revision: 22c03703a37362cfc930388f659cda4fde8fc60e
+  revision: 909ae6214ab7b2b1539be37b9e23cb31204f6189
   ref: master
   specs:
     ddtrace (1.18.0)
@@ -127,7 +127,7 @@ GIT
 PATH
   remote: ../datadog-ci-rb
   specs:
-    datadog-ci (0.5.0)
+    datadog-ci (0.5.1)
       msgpack
 
 GEM
