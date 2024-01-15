@@ -40,8 +40,6 @@ require "support/push_server_mock"
 require "datadog/ci"
 
 Datadog.configure do |c|
-  c.service = "feedbin"
-
   c.ci.enabled = true
   c.ci.experimental_test_suite_level_visibility_enabled = true
   c.ci.instrument :minitest
