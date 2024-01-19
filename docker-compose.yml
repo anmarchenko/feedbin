@@ -19,6 +19,11 @@ services:
     environment:
       - discovery.type=single-node
       - xpack.security.enabled=false
+  redis:
+    image: redis:latest
+    restart: always
+    ports:
+      - "6389:6379"
 
 volumes:
   db-data:
