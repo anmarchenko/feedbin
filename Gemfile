@@ -100,4 +100,5 @@ group :development, :test do
 
   # ci-queue runner
   gem "ci-queue"
+  gem "minitest-reporters"
 end
