@@ -29,3 +29,4 @@ coverage
 !/app/assets/builds/.keep
 .nova
 /test.rb
+log
