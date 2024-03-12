@@ -13,7 +13,7 @@ module FeedCrawler
       download_fingerprint = "694b08e"
 
       stub_request(:get, /dhy5vgj5baket\.cloudfront\.net/).to_return(status: 404)
-      stub_request_file("atom.xml", @feed.feed_url, {
+      stub_request_file("atom.xml", @feed.feed_url,{
         headers: {
           "Etag" => etag,
           "Last-Modified" => last_modified
@@ -134,7 +134,7 @@ module FeedCrawler
 
       Downloader.new.perform(1, url, 10, data.to_h)
 
-      assert_requested(:get, url, times: 1) { _1.headers["If-None-Match"].nil? && _1.headers["If-Modified-Since"].nil? }
+      assert_requested(:get, url, times: 1) { _1.headers["If-None-Match"] == nil && _1.headers["If-Modified-Since"] == nil }
 
       WebMock.reset!
 
@@ -143,6 +143,7 @@ module FeedCrawler
       data = CrawlData.new(defaults.merge!({last_uncached_download: Time.now.to_i}))
       Downloader.new.perform(1, url, 10, data.to_h)
       assert_requested(:get, url, times: 1) { _1.headers["If-None-Match"] == defaults[:etag] && _1.headers["If-Modified-Since"] == defaults[:last_modified] }
+
     end
 
     def test_should_not_be_ok_after_error
@@ -194,26 +195,18 @@ module FeedCrawler
       stub_request(:get, @feed.feed_url).to_return(response)
       stub_request(:get, last_url)
 
-      RedirectCache::PERSIST_AFTER.times do
-        Datadog::CI.trace("phase", "persist_iteration") do
-          Datadog::CI.trace("phase", "Downloader#perform") do
-            Downloader.new.perform(@feed.id, @feed.feed_url, 10, @feed.reload.crawl_data.to_h)
-          end
-          Datadog::CI.trace("phase", "PersistCrawlData#perform") do
-            migration = PersistCrawlData.new
-            migration.jid = SecureRandom.hex
-            migration.perform
-          end
-          assert_nil(@feed.reload.crawl_data.redirected_to)
-        end
+      (RedirectCache::PERSIST_AFTER).times do
+        Downloader.new.perform(@feed.id, @feed.feed_url, 10, @feed.reload.crawl_data.to_h)
+        migration = PersistCrawlData.new
+        migration.jid = SecureRandom.hex
+        migration.perform
+        assert_nil(@feed.reload.crawl_data.redirected_to)
       end
 
       stub_request(:get, /dhy5vgj5baket\.cloudfront\.net/).to_return(status: 404)
 
       Sidekiq::Testing.inline! do
-        Datadog::CI.trace("phase", "Downloader#perform_async") do
-          Downloader.perform_async(@feed.id, @feed.feed_url, 10, @feed.reload.crawl_data.to_h)
-        end
+        Downloader.perform_async(@feed.id, @feed.feed_url, 10, @feed.reload.crawl_data.to_h)
       end
 
       assert_equal(last_url.to_s, @feed.reload.crawl_data.redirected_to)

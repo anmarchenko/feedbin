@@ -11,6 +11,12 @@ module ImageCrawler
         assert_equal(701, image.proposed_size.height)
       end
 
+      def test_should_get_face_location
+        file = copy_support_file("image.jpeg")
+        image = Processor::Cropper.new(file, crop: :smart_crop, extension: "jpeg", width: 542, height: 304)
+        assert_equal(462, image.average_face_position("y", File.new(file)))
+      end
+
       def test_should_crop
         file = copy_support_file("image.jpeg")
         cropper = Processor::Cropper.new(file, crop: :smart_crop, extension: "jpeg", width: 542, height: 304)
@@ -21,7 +27,7 @@ module ImageCrawler
         FileUtils.rm image.file
       end
 
-      def test_should_limit_crop
+      def test_should_crop
         file = copy_support_file("image.jpeg")
         cropper = Processor::Cropper.new(file, crop: :limit_crop, extension: "jpeg", width: 400, height: 400)
         image = cropper.crop!

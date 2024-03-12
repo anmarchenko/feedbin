@@ -8,7 +8,7 @@ class SearchData
       hash[:id]             = @entry.id
       hash[:feed_id]        = @entry.feed_id
       hash[:title]          = title
-      hash[:url]            = @entry.fully_qualified_url
+      hash[:url]            = url
       hash[:author]         = @entry.author
       hash[:content]        = text
       hash[:published]      = @entry.published.iso8601
@@ -17,6 +17,7 @@ class SearchData
       hash[:type]           = type
       hash[:media_duration] = @entry.media_duration
       hash[:word_count]     = hash[:content]&.split&.length || 0
+      hash[:category]       = @entry.categories
 
       if @entry.tweet?
         hash[:twitter_screen_name] = "#{@entry.tweet.main_tweet.user.screen_name} @#{@entry.tweet.main_tweet.user.screen_name}"
@@ -80,6 +81,15 @@ class SearchData
     content = ContentFormatter.summary(@entry.title)
     content = nil if content.empty?
     content
+  end
+
+  def url
+    base = @entry.fully_qualified_url
+    parts = [base]
+    if base.respond_to?(:split)
+      parts.concat base.split(Regexp.union(%w[/ _ -]))
+    end
+    parts
   end
 
   def links
