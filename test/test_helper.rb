@@ -28,6 +28,7 @@ require File.expand_path("../../config/environment", __FILE__)
 
 require "rails/test_help"
 require "sidekiq/testing"
+
 require "webmock/minitest"
 
 require "support/login_helper"
