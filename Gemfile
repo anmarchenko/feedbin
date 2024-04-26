@@ -95,7 +95,7 @@ group :development, :test do
   gem "webmock", "= 3.8.0"
 
   # datadog observability
-  gem "ddtrace", github: "DataDog/dd-trace-rb", ref: "master"
+  gem "datadog", github: "DataDog/dd-trace-rb", ref: "master"
   gem "datadog-ci", path: "../datadog-ci-rb"
 
   # ci-queue runner
