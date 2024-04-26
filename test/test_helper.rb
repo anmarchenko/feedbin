@@ -42,6 +42,9 @@ require "datadog/ci"
 Datadog.configure do |c|
   c.ci.enabled = true
   c.ci.instrument :minitest
+  c.ci.itr_enabled = true
+
+  c.diagnostics.startup_logs.enabled = false
 
   c.tracing.instrument :redis
   c.tracing.instrument :pg
@@ -49,7 +52,7 @@ end
 
 ActiveRecord::FixtureSet.context_class.send :include, LoginHelper
 StripeMock.webhook_fixture_path = "./test/fixtures/stripe_webhooks/"
-WebMock.disable_net_connect!(allow_localhost: true, allow: /datadoghq.eu/)
+WebMock.disable_net_connect!(allow_localhost: true, allow: [/datadoghq/, /datad0g/])
 Sidekiq.logger.level = Logger::WARN
 
 class ActiveSupport::TestCase
@@ -102,7 +105,6 @@ class ActiveSupport::TestCase
       </CopyObjectResult>
     EOT
   end
-
 
   def stub_request_file(file, url, response_options = {})
     options = {body: File.new(support_file(file)), status: 200}.merge(response_options)
