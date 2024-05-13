@@ -15,7 +15,7 @@ class NewsletterReceiverTest < ActiveSupport::TestCase
     stub_request(:delete, file_url)
       .to_return(status: 204)
 
-    Datadog::CI.trace("newsletter_receiver_test") do
+    Datadog::CI.trace("newsletter_receiver_test", type: nil) do
       assert_difference "Subscription.count", +1 do
         assert_difference "NewsletterSaver.jobs.size", +1 do
           assert_difference("NewsletterSender.count", 1) do
