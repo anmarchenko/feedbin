@@ -39,7 +39,7 @@ require "support/push_server_mock"
 
 # datadog instrumentation
 require "datadog/ci"
-require "datadog/auto_instrument"
+# require "datadog/auto_instrument"
 
 Datadog.configure do |c|
   c.ci.enabled = true
