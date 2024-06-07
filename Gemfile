@@ -4,14 +4,14 @@ git_source(:github) { |name| "https://github.com/#{name}.git" }
 gem "rails", "7.1.3.2"
 gem "will_paginate"
 
-gem "http",                github: "feedbin/http",                branch: "feedbin"
-gem "carrierwave",         github: "feedbin/carrierwave",         branch: "feedbin"
-gem "sax-machine",         github: "feedbin/sax-machine",         branch: "feedbin"
-gem "feedjira",            github: "feedbin/feedjira",            branch: "f2"
-gem "feedkit",             github: "feedbin/feedkit",             branch: "master"
-gem "html-pipeline",       github: "feedbin/html-pipeline",       branch: "feedbin"
-gem "html_diff",           github: "feedbin/html_diff",           ref: "013e1bb"
-gem "twitter",             github: "feedbin/twitter",             branch: "feedbin"
+gem "http", github: "feedbin/http", branch: "feedbin"
+gem "carrierwave", github: "feedbin/carrierwave", branch: "feedbin"
+gem "sax-machine", github: "feedbin/sax-machine", branch: "feedbin"
+gem "feedjira", github: "feedbin/feedjira", branch: "f2"
+gem "feedkit", github: "feedbin/feedkit", branch: "master"
+gem "html-pipeline", github: "feedbin/html-pipeline", branch: "feedbin"
+gem "html_diff", github: "feedbin/html_diff", ref: "013e1bb"
+gem "twitter", github: "feedbin/twitter", branch: "feedbin"
 
 # https://github.com/mikel/mail/issues/1521
 gem "mail", "< 2.8"
@@ -99,6 +99,7 @@ group :development, :test do
   gem "datadog-ci", path: "../../p/datadog-ci-rb"
 
   # ci-queue runner
+  #
   gem "ci-queue"
   gem "minitest-reporters"
 end
