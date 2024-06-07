@@ -96,7 +96,7 @@ group :development, :test do
 
   # datadog observability
   gem "datadog", github: "DataDog/dd-trace-rb", ref: "master"
-  gem "datadog-ci", path: "../datadog-ci-rb"
+  gem "datadog-ci", path: "../../p/datadog-ci-rb"
 
   # ci-queue runner
   gem "ci-queue"
