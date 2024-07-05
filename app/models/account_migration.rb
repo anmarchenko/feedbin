@@ -13,7 +13,6 @@ class AccountMigration < ApplicationRecord
   end
 
   def method_name
-
   end
 
   def streams
