@@ -10,8 +10,8 @@ module Search
       @entry = create_entry(@user.feeds.first)
     end
 
-    test "should be a new test" do
-      expect (1).to eq(1)
+    test "should be a new new new test" do
+      assert 1 + 1 == 2
     end
 
     test "should index entry" do
