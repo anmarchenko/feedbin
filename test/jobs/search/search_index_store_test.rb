@@ -10,6 +10,10 @@ module Search
       @entry = create_entry(@user.feeds.first)
     end
 
+    test "should be a new test" do
+      expect (1).to eq(1)
+    end
+
     test "should index entry" do
       SearchIndexStore.new.perform("Entry", @entry.id)
       Search.client { _1.refresh }
