@@ -15,7 +15,7 @@ Rails.application.reloader.to_prepare do
 
   shared_settings = {
     index: {
-      number_of_shards: "6",
+      number_of_shards: "6"
     },
     analysis: {
       analyzer: {
@@ -130,8 +130,7 @@ Rails.application.reloader.to_prepare do
       primary: ConnectionPool.new(size: ENV.fetch("DB_POOL", 1)) {
         Search::Connection.new(ENV.fetch("ELASTICSEARCH_URL", "http://localhost:9200"),
           username: ENV["ELASTICSEARCH_USERNAME"],
-          password: ENV["ELASTICSEARCH_PASSWORD"]
-        )
+          password: ENV["ELASTICSEARCH_PASSWORD"])
       }
     }
 
@@ -139,8 +138,7 @@ Rails.application.reloader.to_prepare do
       hash[:servers][:secondary] = ConnectionPool.new(size: ENV.fetch("DB_POOL", 1)) {
         Search::Connection.new(ENV.fetch("ELASTICSEARCH_ALT_URL", "http://localhost:9200"),
           username: ENV["ELASTICSEARCH_ALT_USERNAME"],
-          password: ENV["ELASTICSEARCH_ALT_PASSWORD"]
-        )
+          password: ENV["ELASTICSEARCH_ALT_PASSWORD"])
       }
     end
 
@@ -178,7 +176,6 @@ Rails.application.reloader.to_prepare do
     Search.client(mirror: true) { _1.add_alias(entry_index, alias_name: Entry.table_name) }
     Search.client(mirror: true) { _1.add_alias(action_index, alias_name: Action.table_name) }
   end
-
 end
 
 unless Rails.env.production?

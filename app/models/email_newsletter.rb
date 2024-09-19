@@ -1,5 +1,4 @@
 class EmailNewsletter
-
   attr_reader :full_token
 
   def initialize(email, full_token)
@@ -94,7 +93,7 @@ class EmailNewsletter
   def html?
     return true if !@email.html_part.nil?
     return true if content_type.respond_to?(:starts_with?) && content_type.starts_with?("text/html")
-    return false
+    false
   end
 
   def content_type
@@ -104,5 +103,4 @@ class EmailNewsletter
   def parsed_from
     @email[:from].address_list.addresses.first
   end
-
 end

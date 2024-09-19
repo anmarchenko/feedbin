@@ -1,5 +1,6 @@
 class UserMailer < ApplicationMailer
   default from: "Feedbin <#{ENV["FROM_ADDRESS"]}>", skip_premailer: true
+
   include ApplicationHelper
   helper ApplicationHelper
 
