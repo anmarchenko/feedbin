@@ -30,4 +30,4 @@ coverage
 .nova
 /test.rb
 log
-debug.log
+*.log
