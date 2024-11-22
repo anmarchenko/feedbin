@@ -37,24 +37,9 @@ require "support/assertions"
 require "support/api_controller_test_case"
 require "support/push_server_mock"
 
-# datadog instrumentation
-require "datadog/ci"
-# require "datadog/auto_instrument"
-
-Datadog.configure do |c|
-  c.ci.enabled = true
-  c.ci.instrument :minitest
-  c.ci.itr_enabled = true
-
-  c.diagnostics.startup_logs.enabled = false
-
-  c.tracing.instrument :redis
-  c.tracing.instrument :pg
-end
-
 ActiveRecord::FixtureSet.context_class.send :include, LoginHelper
 StripeMock.webhook_fixture_path = "./test/fixtures/stripe_webhooks/"
-WebMock.disable_net_connect!(allow_localhost: true, allow: [/datadoghq/, /datad0g/])
+WebMock.disable_net_connect!(allow_localhost: true)
 Sidekiq.logger.level = Logger::WARN
 
 class ActiveSupport::TestCase
