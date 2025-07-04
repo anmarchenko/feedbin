@@ -15,7 +15,6 @@ class EditTest < ApplicationSystemTestCase
 
     wait_for_ajax
 
-    find(".modal [data-behavior~=autofocus]").set(feed_name)
     find("input[placeholder='+ New Tag']").set(tag_name)
     find(".modal form button[type=submit]").click
 
