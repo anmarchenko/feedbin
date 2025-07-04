@@ -2,8 +2,6 @@ require "test_helper"
 
 module Search
   class SearchIndexStoreTest < ActiveSupport::TestCase
-    datadog_itr_unskippable
-
     setup do
       clear_search
       @user = users(:ben)
