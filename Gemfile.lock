@@ -1,4 +1,14 @@
 GIT
+  remote: https://github.com/DataDog/datadog-ci-rb.git
+  revision: 9d54a15e2ae1629343d1be274185fe47ec0e50d5
+  ref: main
+  specs:
+    datadog-ci (1.23.1)
+      datadog (~> 2.4)
+      drb
+      msgpack
+
+GIT
   remote: https://github.com/feedbin/carrierwave.git
   revision: 3cefc38b31e079da24f3e372c243b7132ba59708
   branch: feedbin
@@ -194,7 +204,6 @@ GEM
     addressable (2.8.6)
       public_suffix (>= 2.0.2, < 6.0)
     aggregate (0.2.4)
-    ansi (1.5.0)
     apnotic (1.7.1)
       connection_pool (~> 2)
       net-http2 (>= 0.18.3, < 2)
@@ -217,7 +226,6 @@ GEM
     builder (3.2.4)
     byebug (11.1.3)
     cgi (0.4.1)
-    ci-queue (0.47.0)
     clockwork (3.0.2)
       activesupport
       tzinfo
@@ -238,6 +246,13 @@ GEM
     css_parser (1.16.0)
       addressable
     dante (0.2.0)
+    datadog (2.22.0)
+      datadog-ruby_core_source (~> 3.4, >= 3.4.1)
+      libdatadog (~> 22.0.1.1.0)
+      libddwaf (~> 1.25.1.1.0)
+      logger
+      msgpack
+    datadog-ruby_core_source (3.4.1)
     date (3.3.4)
     debug (1.9.1)
       irb (~> 1.10)
@@ -351,6 +366,14 @@ GEM
       base64
     kgio (2.11.4)
     language_server-protocol (3.17.0.3)
+    libdatadog (22.0.1.1.0)
+    libdatadog (22.0.1.1.0-x86_64-linux)
+    libddwaf (1.25.1.1.0-arm64-darwin)
+      ffi (~> 1.0)
+    libddwaf (1.25.1.1.0-x86_64-darwin)
+      ffi (~> 1.0)
+    libddwaf (1.25.1.1.0-x86_64-linux)
+      ffi (~> 1.0)
     librato-metrics (1.6.2)
       aggregate (~> 0.2.2)
       faraday (>= 0.7, < 2.0)
@@ -369,6 +392,7 @@ GEM
     llhttp-ffi (0.4.0)
       ffi-compiler (~> 1.0)
       rake (~> 13.0)
+    logger (1.7.0)
     lograge (0.14.0)
       actionpack (>= 4)
       activesupport (>= 4)
@@ -402,11 +426,6 @@ GEM
     mini_magick (4.12.0)
     mini_mime (1.1.5)
     minitest (5.22.2)
-    minitest-reporters (1.6.1)
-      ansi
-      builder
-      minitest (>= 5.0)
-      ruby-progressbar
     minitest-stub-const (0.6)
     minitest-stub_any_instance (1.0.3)
     msgpack (1.7.2)
@@ -678,6 +697,7 @@ PLATFORMS
   arm64-darwin-20
   arm64-darwin-22
   arm64-darwin-23
+  arm64-darwin-24
   x86_64-darwin-20
   x86_64-linux
 
@@ -694,10 +714,10 @@ DEPENDENCIES
   byebug
   capybara!
   carrierwave!
-  ci-queue
   clockwork
   coffee-rails
   connection_pool
+  datadog-ci!
   debug
   dotenv-rails
   down
@@ -725,7 +745,6 @@ DEPENDENCIES
   lookbook
   mail (< 2.8)
   minitest
-  minitest-reporters
   minitest-stub-const
   minitest-stub_any_instance
   net-http-persistent

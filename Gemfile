@@ -81,6 +81,8 @@ group :development do
 end
 
 group :development, :test do
+  gem "datadog-ci", github: "DataDog/datadog-ci-rb", ref: "main"
+
   gem "stripe-ruby-mock", github: "feedbin/stripe-ruby-mock", branch: "feedbin", require: "stripe_mock"
   gem "byebug", platforms: [:mri, :mingw, :x64_mingw]
   gem "capybara", github: "teamcapybara/capybara"
@@ -94,9 +96,4 @@ group :development, :test do
   gem "selenium-webdriver"
   gem "standard"
   gem "webmock", "= 3.8.0"
-
-  # ci-queue runner
-  #
-  gem "ci-queue"
-  gem "minitest-reporters"
 end
