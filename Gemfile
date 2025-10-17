@@ -4,6 +4,8 @@ git_source(:github) { |name| "https://github.com/#{name}.git" }
 gem "rails", "7.1.3.2"
 gem "will_paginate"
 
+gem "openssl", ">= 3.3.1"
+
 gem "http", github: "feedbin/http", branch: "feedbin"
 gem "carrierwave", github: "feedbin/carrierwave", branch: "feedbin"
 gem "sax-machine", github: "feedbin/sax-machine", branch: "feedbin"
