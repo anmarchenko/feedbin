@@ -76,6 +76,11 @@ jobs:
           chmod +x bin/ddtest
         env:
           GH_TOKEN: ${{ github.token }}
+      - name: Runs Elasticsearch
+        uses: elastic/elastic-github-actions/elasticsearch@master
+        with:
+          stack-version: 8.10.0
+          security-enabled: false
       - name: Setup DB
         env:
           PGHOST: 127.0.0.1
