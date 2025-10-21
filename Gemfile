@@ -84,6 +84,7 @@ end
 
 group :development, :test do
   gem "datadog-ci", github: "DataDog/datadog-ci-rb", ref: "main"
+  # gem "datadog-ci", path: "../../p/datadog-ci-rb"
 
   gem "stripe-ruby-mock", github: "feedbin/stripe-ruby-mock", branch: "feedbin", require: "stripe_mock"
   gem "byebug", platforms: [:mri, :mingw, :x64_mingw]

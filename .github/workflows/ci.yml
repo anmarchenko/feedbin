@@ -2,15 +2,97 @@ name: CI
 
 on: [push]
 
+env:
+  DD_TRACE_DEBUG: 0
+  DD_ENV: ci
+  DD_TEST_OPTIMIZATION_RUNNER_PLATFORM: ruby
+  DD_TEST_OPTIMIZATION_RUNNER_FRAMEWORK: minitest
+
 jobs:
+  plan:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.matrix.outputs.matrix }}
+    services:
+      redis:
+        image: redis
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 6379:6379
+      postgres:
+        image: postgres
+        env:
+          POSTGRES_PASSWORD: postgres
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.3.0
+          bundler-cache: true
+      - name: Configure Datadog Test Optimization
+        uses: datadog/test-visibility-github-action@v2
+        with:
+          languages: ruby
+          api_key: ${{ secrets.DD_API_KEY }}
+          site: datadoghq.eu
+      - name: Download ddtest binary
+        run: |
+          LATEST_PRERELEASE_TAG=$(gh release list --repo DataDog/ddtest --json tagName,isPrerelease --jq '.[] | select(.isPrerelease) | .tagName' | head -n 1)
+          gh release download "$LATEST_PRERELEASE_TAG" --repo DataDog/ddtest --pattern "ddtest-linux-amd64" --dir bin
+          mv bin/ddtest-linux-amd64 bin/ddtest
+          chmod +x bin/ddtest
+        env:
+          GH_TOKEN: ${{ github.token }}
+      - name: Setup DB
+        env:
+          PGHOST: 127.0.0.1
+          PGUSER: postgres
+          POSTGRES_PASSWORD: postgres
+          PGPASSWORD: postgres
+          RAILS_ENV: test
+          KINDLEGEN_PATH: /usr/local/bin/kindlegen
+        run: |
+          ruby -v
+          psql -c 'create database feedbin_test;' -U postgres
+          bundle exec rake db:setup
+      - name: Setup Datadog Test Runner
+        run: bin/ddtest plan
+        env:
+          DD_TEST_OPTIMIZATION_RUNNER_MIN_PARALLELISM: 1
+          DD_TEST_OPTIMIZATION_RUNNER_MAX_PARALLELISM: 4
+      - name: Set matrix output
+        id: matrix
+        run: cat .testoptimization/github/config >> $GITHUB_OUTPUT
+      - name: Upload DD artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: dd-artifacts
+          path: '.testoptimization'
+          if-no-files-found: warn
+          include-hidden-files: true
+
   test:
+    needs: [plan]
+    env:
+      DD_TEST_OPTIMIZATION_RUNNER_CI_NODE: ${{ matrix.ci_node_index }}
+
     strategy:
       fail-fast: false
-      matrix:
-        os: [ubuntu-22.04]
-        ruby: [3.3.0]
+      matrix: ${{ fromJson(needs.plan.outputs.matrix) }}
 
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
 
     services:
       redis:
@@ -75,7 +157,7 @@ jobs:
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: ${{ matrix.ruby }}
+          ruby-version: 3.3.0
           bundler-cache: true
 
       - name: Configure Datadog Test Optimization
@@ -85,6 +167,15 @@ jobs:
           api_key: ${{ secrets.DD_API_KEY }}
           site: datadoghq.eu
 
+      - name: Download ddtest binary
+        run: |
+          LATEST_PRERELEASE_TAG=$(gh release list --repo DataDog/ddtest --json tagName,isPrerelease --jq '.[] | select(.isPrerelease) | .tagName' | head -n 1)
+          gh release download "$LATEST_PRERELEASE_TAG" --repo DataDog/ddtest --pattern "ddtest-linux-amd64" --dir bin
+          mv bin/ddtest-linux-amd64 bin/ddtest
+          chmod +x bin/ddtest
+        env:
+          GH_TOKEN: ${{ github.token }}
+
       - name: Build and test with Rake
         env:
           PGHOST: 127.0.0.1
@@ -93,11 +184,12 @@ jobs:
           PGPASSWORD: postgres
           RAILS_ENV: test
           KINDLEGEN_PATH: /usr/local/bin/kindlegen
+          DD_TEST_SESSION_NAME: test-runner-${{ matrix.ci_node_index }}
         run: |
           ruby -v
           psql -c 'create database feedbin_test;' -U postgres
           bundle exec rake db:setup
-          bundle exec rails test
+          bin/ddtest run
 
       - name: Lint JS
         run: npm run lint
@@ -106,6 +198,6 @@ jobs:
         uses: actions/upload-artifact@v4
         if: failure()
         with:
-          name: screenshots ${{ matrix.os }}-${{ matrix.ruby }}
+          name: screenshots
           path: tmp/screenshots
           if-no-files-found: ignore
