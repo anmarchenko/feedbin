@@ -98,6 +98,12 @@ jobs:
         env:
           DD_TEST_OPTIMIZATION_RUNNER_MIN_PARALLELISM: 1
           DD_TEST_OPTIMIZATION_RUNNER_MAX_PARALLELISM: 4
+          PGHOST: 127.0.0.1
+          PGUSER: postgres
+          POSTGRES_PASSWORD: postgres
+          PGPASSWORD: postgres
+          RAILS_ENV: test
+          KINDLEGEN_PATH: /usr/local/bin/kindlegen
       - name: Set matrix output
         id: matrix
         run: cat .testoptimization/github/config >> $GITHUB_OUTPUT
@@ -105,7 +111,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: dd-artifacts
-          path: '.testoptimization'
+          path: ".testoptimization"
           if-no-files-found: warn
           include-hidden-files: true
 
