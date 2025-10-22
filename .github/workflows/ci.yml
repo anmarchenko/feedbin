@@ -149,6 +149,12 @@ jobs:
           - 5432:5432
     steps:
       - uses: actions/checkout@v3
+      - name: Download DD artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: dd-artifacts
+          path: '.testoptimization'
+
       - uses: nanasess/setup-chromedriver@v2
       - name: Install system dependencies
         run: |
