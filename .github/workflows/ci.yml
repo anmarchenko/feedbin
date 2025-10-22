@@ -93,6 +93,8 @@ jobs:
           ruby -v
           psql -c 'create database feedbin_test;' -U postgres
           bundle exec rake db:setup
+      - name: Build Tailwind CSS
+        run: bundle exec rails tailwindcss:build
       - name: Setup Datadog Test Runner
         run: bin/ddtest plan
         env:
@@ -213,6 +215,9 @@ jobs:
           chmod +x bin/ddtest
         env:
           GH_TOKEN: ${{ github.token }}
+
+      - name: Build Tailwind CSS
+        run: bundle exec rails tailwindcss:build
 
       - name: Build and test with Rake
         env:
