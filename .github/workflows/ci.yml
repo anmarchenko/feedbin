@@ -15,27 +15,6 @@ jobs:
       matrix: ${{ steps.matrix.outputs.matrix }}
     env:
       DD_PLANNING: 1
-    services:
-      redis:
-        image: redis
-        options: >-
-          --health-cmd "redis-cli ping"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-        ports:
-          - 6379:6379
-      postgres:
-        image: postgres
-        env:
-          POSTGRES_PASSWORD: postgres
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-        ports:
-          - 5432:5432
     steps:
       - uses: actions/checkout@v4
       - name: Cache APT packages
@@ -77,18 +56,6 @@ jobs:
           chmod +x bin/ddtest
         env:
           GH_TOKEN: ${{ github.token }}
-      - name: Setup DB
-        env:
-          PGHOST: 127.0.0.1
-          PGUSER: postgres
-          POSTGRES_PASSWORD: postgres
-          PGPASSWORD: postgres
-          RAILS_ENV: test
-          KINDLEGEN_PATH: /usr/local/bin/kindlegen
-        run: |
-          ruby -v
-          psql -c 'create database feedbin_test;' -U postgres
-          bundle exec rake db:setup
       - name: Build Tailwind CSS
         run: bundle exec rails tailwindcss:build
       - name: Setup Datadog Test Runner
@@ -96,10 +63,6 @@ jobs:
         env:
           DD_TEST_OPTIMIZATION_RUNNER_MIN_PARALLELISM: 1
           DD_TEST_OPTIMIZATION_RUNNER_MAX_PARALLELISM: 4
-          PGHOST: 127.0.0.1
-          PGUSER: postgres
-          POSTGRES_PASSWORD: postgres
-          PGPASSWORD: postgres
           RAILS_ENV: test
           KINDLEGEN_PATH: /usr/local/bin/kindlegen
       - name: Set matrix output
