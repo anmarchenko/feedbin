@@ -26,7 +26,14 @@ $redis = {
 
 require File.expand_path("../../config/environment", __FILE__)
 
-require "rails/test_help"
+if ENV["DD_PLANNING"].present?
+  if defined?(Rails.application.config.active_record)
+    Rails.application.config.active_record.maintain_test_schema = false
+  end
+else
+  require "rails/test_help"
+end
+
 require "sidekiq/testing"
 
 require "webmock/minitest"
