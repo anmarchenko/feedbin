@@ -160,7 +160,7 @@ Rails.application.reloader.to_prepare do
     module_function :client
   end
 
-  if !Rails.env.production? && !ENV["DD_TEST_OPTIMIZATION_DISCOVERY_ENABLED"].present?
+  if !Rails.env.production? && !ENV["DD_PLANNING"].present?
     entry_index = "#{Entry.table_name}-01"
     action_index = "#{Action.table_name}-01"
 
@@ -178,7 +178,7 @@ Rails.application.reloader.to_prepare do
   end
 end
 
-if !Rails.env.production? && !ENV["DD_TEST_OPTIMIZATION_DISCOVERY_ENABLED"].present?
+if !Rails.env.production? && !ENV["DD_PLANNING"].present?
   ActiveSupport::Notifications.subscribe("request.search") do |name, start, finish, id, payload|
     Rails.logger.info(search: "request", path: payload.safe_dig(:response).request.uri.to_s, payload: payload.safe_dig(:response)&.request&.body&.source)
     Rails.logger.info(search: "response", path: payload.safe_dig(:response).request.uri.to_s, payload: payload.safe_dig(:response)&.parse)
