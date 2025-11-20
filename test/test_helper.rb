@@ -54,7 +54,9 @@ class ActiveSupport::TestCase
   include LoginHelper
   include FactoryHelper
 
-  fixtures :all
+  unless ENV["DD_PLANNING"].present?
+    fixtures :all
+  end
 
   def flush_redis
     Sidekiq::Worker.clear_all
