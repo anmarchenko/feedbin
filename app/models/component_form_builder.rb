@@ -3,6 +3,7 @@ class ComponentFormBuilder < ActionView::Helpers::FormBuilder
     super(method, tag_value, merge_defaults(options))
   end
 
+
   private
 
   def merge_defaults(options)

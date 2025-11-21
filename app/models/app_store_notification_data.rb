@@ -15,6 +15,7 @@ class AppStoreNotificationData
     end_date = end_date || Time.now
     body[:endDate] = format_date(end_date)
 
+
     response = HTTP
       .auth("Bearer %<token>s" % {token: token})
       .post("https://api.storekit.itunes.apple.com/inApps/v1/notifications/history", json: body)

@@ -41,6 +41,7 @@ module Searchable
       }.compact
     end
 
+
     def self.scoped_search(params, user)
       data = params.clone
       per_page = data.delete(:per_page) || WillPaginate.per_page

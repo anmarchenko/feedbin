@@ -4,6 +4,8 @@ git_source(:github) { |name| "https://github.com/#{name}.git" }
 gem "rails", "7.1.3.2"
 gem "will_paginate"
 
+gem "openssl", ">= 3.3.1"
+
 gem "http", github: "feedbin/http", branch: "feedbin"
 gem "carrierwave", github: "feedbin/carrierwave", branch: "feedbin"
 gem "sax-machine", github: "feedbin/sax-machine", branch: "feedbin"
@@ -15,6 +17,7 @@ gem "twitter", github: "feedbin/twitter", branch: "feedbin"
 
 # https://github.com/mikel/mail/issues/1521
 gem "mail", "< 2.8"
+
 
 gem "activerecord-import"
 gem "addressable", require: "addressable/uri"
@@ -81,6 +84,9 @@ group :development do
 end
 
 group :development, :test do
+  gem "datadog-ci", github: "DataDog/datadog-ci-rb", ref: "main"
+  # gem "datadog-ci", path: "../../p/datadog-ci-rb"
+
   gem "stripe-ruby-mock", github: "feedbin/stripe-ruby-mock", branch: "feedbin", require: "stripe_mock"
   gem "byebug", platforms: [:mri, :mingw, :x64_mingw]
   gem "capybara", github: "teamcapybara/capybara"
@@ -94,9 +100,4 @@ group :development, :test do
   gem "selenium-webdriver"
   gem "standard"
   gem "webmock", "= 3.8.0"
-
-  # ci-queue runner
-  #
-  gem "ci-queue"
-  gem "minitest-reporters"
 end

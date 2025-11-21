@@ -42,6 +42,8 @@ class Customer
     end
   end
 
+
+
   def update_email(email)
     customer.email = email
     customer.save

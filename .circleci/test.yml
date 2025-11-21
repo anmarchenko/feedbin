@@ -1,0 +1,109 @@
+version: '2.1'
+
+parameters:
+  parallelism:
+    type: integer
+    default: 1
+
+orbs:
+  node: circleci/node@7
+  ruby: circleci/ruby@2
+  test-optimization-circleci-orb: datadog/test-optimization-circleci-orb@1
+
+jobs:
+  test:
+    parallelism: << pipeline.parameters.parallelism >>
+    docker:
+      - image: cimg/ruby:3.3.0-node
+      - image: cimg/postgres:13.13
+        environment:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+      - image: cimg/redis:7.0
+      - image: docker.elastic.co/elasticsearch/elasticsearch:8.10.0
+        environment:
+          discovery.type: single-node
+          xpack.security.enabled: "false"
+          ES_JAVA_OPTS: "-Xms512m -Xmx512m"
+    environment:
+      RAILS_ENV: test
+      NODE_ENV: test
+      PGHOST: 127.0.0.1
+      PGUSER: postgres
+      POSTGRES_PASSWORD: postgres
+      PGPASSWORD: postgres
+      KINDLEGEN_PATH: /usr/local/bin/kindlegen
+      REDIS_URL: redis://localhost:6379
+      ELASTICSEARCH_URL: http://localhost:9200
+      BUNDLE_PATH: vendor/bundle
+      BUNDLE_JOBS: 4
+      DD_ENV: ci
+      DD_SERVICE: feedbin-circleci
+      DD_TEST_SESSION_NAME: test-runner-${{ matrix.ci_node_index }}
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - apt-cache-v1-{{ arch }}
+      - restore_cache:
+          keys:
+            - ddtest-plan-{{ .Revision }}
+      - run:
+          name: Install system dependencies
+          command: |
+            set -eux
+            sudo apt-get update
+            sudo apt-get install --quiet --yes \
+              libffi-dev \
+              libidn11-dev \
+              libpq-dev \
+              libreadline-dev \
+              libssl-dev \
+              libvips \
+              libxml2-dev \
+              libxslt1-dev \
+              rustc \
+              zlib1g-dev
+      - run:
+          name: Install pigo
+          command: |
+            set -eux
+            wget --quiet --output-document - https://github.com/esimov/pigo/releases/download/v1.4.5/pigo-1.4.5-linux-amd64.tar.gz | tar --extract --gunzip --directory=/tmp/
+            sudo mv /tmp/pigo-1.4.5-linux-amd64/pigo /usr/local/bin/
+      - run:
+          name: Wait for Elasticsearch
+          command: |
+            set -eux
+            for _ in $(seq 1 30); do
+              if curl -fsS http://localhost:9200 >/dev/null; then
+                exit 0
+              fi
+              sleep 2
+            done
+            echo "Elasticsearch did not become ready in time"
+            exit 1
+      - ruby/install-deps
+      - node/install-packages:
+          pkg-manager: npm
+      - run:
+          name: Prepare database
+          command: bundle exec rake db:setup
+      - test-optimization-circleci-orb/autoinstrument:
+          languages: ruby
+          site: datadoghq.eu
+      - run:
+          name: Precompile assets
+          command: |
+            bundle exec rails tailwindcss:build
+      - run:
+          name: Run tests with ddtest
+          command: |
+            NODE_INDEX=${CIRCLE_NODE_INDEX:-0}
+            export DD_TEST_SESSION_NAME="feedbin-ci-${NODE_INDEX}"
+            export DD_TEST_OPTIMIZATION_RUNNER_CI_NODE="${NODE_INDEX}"
+            ./bin/ddtest run --platform ruby --framework minitest
+
+workflows:
+  test:
+    jobs:
+      - test
