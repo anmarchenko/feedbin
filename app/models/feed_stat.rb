@@ -21,13 +21,13 @@ class FeedStat < ApplicationRecord
     entry_counts
   end
 
+
   def self.max_entry_count(feed_ids, start_date)
     max_query = "SELECT COALESCE(MAX(entries_count), 0) as max FROM feed_stats WHERE feed_id IN(?) and day >= ?"
     max_query = ActiveRecord::Base.send(:sanitize_sql_array, [max_query, feed_ids, start_date])
     max = ActiveRecord::Base.connection.execute(max_query)
     max.first["max"].to_i
   end
-
 
   def self.relative_entry_count_query
     <<-eos
