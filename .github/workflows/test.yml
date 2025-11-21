@@ -27,7 +27,6 @@ jobs:
       PGUSER: postgres
       POSTGRES_PASSWORD: postgres
       PGPASSWORD: postgres
-      RAILS_ENV: test
       KINDLEGEN_PATH: /usr/local/bin/kindlegen
       DD_TEST_SESSION_NAME: test-runner-${{ matrix.ci_node_index }}
       DB_NAME: feedbin_test_${{ matrix.ci_node_index }}

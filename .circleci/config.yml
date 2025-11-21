@@ -38,11 +38,12 @@ jobs:
               libxslt1-dev \
               rustc \
               zlib1g-dev
-      - name: Install pigo
-        run: |
-          set -eux
-          wget --quiet --output-document - https://github.com/esimov/pigo/releases/download/v1.4.5/pigo-1.4.5-linux-amd64.tar.gz | tar --extract --gunzip --directory=/tmp/
-          sudo mv /tmp/pigo-1.4.5-linux-amd64/pigo /usr/local/bin/
+      - run:
+          name: Install pigo
+          command: |
+            set -eux
+            wget --quiet --output-document - https://github.com/esimov/pigo/releases/download/v1.4.5/pigo-1.4.5-linux-amd64.tar.gz | tar --extract --gunzip --directory=/tmp/
+            sudo mv /tmp/pigo-1.4.5-linux-amd64/pigo /usr/local/bin/
       - save_cache:
           key: apt-cache-v1-{{ arch }}
           paths:
@@ -51,7 +52,7 @@ jobs:
             - /usr/local/bin
       - ruby/install-deps
       - node/install-packages:
-          pkg-manager: yarn
+          pkg-manager: npm
       - test-optimization-circleci-orb/autoinstrument:
           languages: ruby
           site: datadoghq.eu
