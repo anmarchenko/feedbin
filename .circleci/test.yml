@@ -47,9 +47,6 @@ jobs:
       - node/install-packages:
           pkg-manager: npm
       - run:
-          name: Copy .env
-          command: cp .env_sample .env
-      - run:
           name: Prepare database
           command: bundle exec rake db:setup
       - test-optimization-circleci-orb/autoinstrument:

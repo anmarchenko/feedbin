@@ -17,6 +17,7 @@ jobs:
       BUNDLE_PATH: vendor/bundle
       BUNDLE_JOBS: 4
       DD_SERVICE: feedbin-circleci
+      DD_PLANNING: 1
     steps:
       - checkout
       - restore_cache:
@@ -68,7 +69,7 @@ jobs:
           command: ./bin/ddtest plan --platform ruby --framework minitest
           environment:
             DD_TEST_OPTIMIZATION_RUNNER_MIN_PARALLELISM: 1
-            DD_TEST_OPTIMIZATION_RUNNER_MAX_PARALLELISM: 8
+            DD_TEST_OPTIMIZATION_RUNNER_MAX_PARALLELISM: 4
       - save_cache:
           key: ddtest-plan-{{ .Revision }}
           paths:
