@@ -18,6 +18,7 @@ gem "twitter", github: "feedbin/twitter", branch: "feedbin"
 # https://github.com/mikel/mail/issues/1521
 gem "mail", "< 2.8"
 
+
 gem "activerecord-import"
 gem "addressable", require: "addressable/uri"
 gem "apnotic"
