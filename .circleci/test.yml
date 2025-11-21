@@ -43,6 +43,28 @@ jobs:
       - restore_cache:
           keys:
             - ddtest-plan-{{ .Revision }}
+      - run:
+          name: Install system dependencies
+          command: |
+            set -eux
+            sudo apt-get update
+            sudo apt-get install --quiet --yes \
+              libffi-dev \
+              libidn11-dev \
+              libpq-dev \
+              libreadline-dev \
+              libssl-dev \
+              libvips \
+              libxml2-dev \
+              libxslt1-dev \
+              rustc \
+              zlib1g-dev
+      - run:
+          name: Install pigo
+          command: |
+            set -eux
+            wget --quiet --output-document - https://github.com/esimov/pigo/releases/download/v1.4.5/pigo-1.4.5-linux-amd64.tar.gz | tar --extract --gunzip --directory=/tmp/
+            sudo mv /tmp/pigo-1.4.5-linux-amd64/pigo /usr/local/bin/
       - ruby/install-deps
       - node/install-packages:
           pkg-manager: npm
