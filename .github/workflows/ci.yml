@@ -186,9 +186,10 @@ jobs:
           RAILS_ENV: test
           KINDLEGEN_PATH: /usr/local/bin/kindlegen
           DD_TEST_SESSION_NAME: test-runner-${{ matrix.ci_node_index }}
+          DB_NAME: feedbin_test_${{ matrix.ci_node_index }}
         run: |
           ruby -v
-          psql -c 'create database feedbin_test;' -U postgres
+          psql -c "create database ${DB_NAME};" -U postgres
           bundle exec rake db:setup
           bin/ddtest run
 
