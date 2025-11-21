@@ -15,7 +15,6 @@ class Customer
     new_customer
   end
 
-
   def self.retrieve(customer_id)
     new(Stripe::Customer.retrieve(customer_id))
   end
@@ -42,6 +41,8 @@ class Customer
       )
     end
   end
+
+
 
   def update_email(email)
     customer.email = email

@@ -1,6 +1,8 @@
 class FeedStat < ApplicationRecord
   belongs_to :feed
 
+
+
   def self.get_entry_counts(feed_ids, start_date)
     end_date = Time.now
 
@@ -20,7 +22,6 @@ class FeedStat < ApplicationRecord
     end
     entry_counts
   end
-
 
   def self.max_entry_count(feed_ids, start_date)
     max_query = "SELECT COALESCE(MAX(entries_count), 0) as max FROM feed_stats WHERE feed_id IN(?) and day >= ?"
