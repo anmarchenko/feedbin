@@ -28,6 +28,7 @@ class FeedStat < ApplicationRecord
     max.first["max"].to_i
   end
 
+
   def self.relative_entry_count_query
     <<-eos
       SELECT
