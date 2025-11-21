@@ -177,7 +177,7 @@ jobs:
       - name: Build Tailwind CSS
         run: bundle exec rails tailwindcss:build
 
-      - name: Build and test with Rake
+      - name: Test with ddtest
         env:
           PGHOST: 127.0.0.1
           PGUSER: postgres

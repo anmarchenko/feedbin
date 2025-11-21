@@ -1,0 +1,74 @@
+version: '2.1'
+
+parameters:
+  parallelism:
+    type: integer
+    default: 1
+
+orbs:
+  node: circleci/node@7
+  ruby: circleci/ruby@2
+  test-optimization-circleci-orb: datadog/test-optimization-circleci-orb@1
+
+jobs:
+  test:
+    parallelism: << pipeline.parameters.parallelism >>
+    docker:
+      - image: cimg/ruby:3.3.0-node
+      - image: cimg/postgres:13.13
+        environment:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+      - image: cimg/redis:7.0
+    environment:
+      RAILS_ENV: test
+      NODE_ENV: test
+      PGHOST: 127.0.0.1
+      PGUSER: postgres
+      POSTGRES_PASSWORD: postgres
+      PGPASSWORD: postgres
+      RAILS_ENV: test
+      KINDLEGEN_PATH: /usr/local/bin/kindlegen
+      DD_TEST_SESSION_NAME: test-runner-${{ matrix.ci_node_index }}
+      DB_NAME: feedbin_test_${{ matrix.ci_node_index }}
+      REDIS_URL: redis://localhost:6379
+      BUNDLE_PATH: vendor/bundle
+      BUNDLE_JOBS: 4
+      DD_ENV: ci
+      DD_SERVICE: feedbin-circleci
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - apt-cache-v1-{{ arch }}
+      - restore_cache:
+          keys:
+            - ddtest-plan-{{ .Revision }}
+      - ruby/install-deps
+      - node/install-packages:
+          pkg-manager: npm
+      - run:
+          name: Copy .env
+          command: cp .env_sample .env
+      - run:
+          name: Prepare database
+          command: bundle exec rake db:setup
+      - test-optimization-circleci-orb/autoinstrument:
+          languages: ruby
+          site: datadoghq.eu
+      - run:
+          name: Precompile assets
+          command: |
+            bundle exec rails tailwindcss:build
+      - run:
+          name: Run tests with ddtest
+          command: |
+            NODE_INDEX=${CIRCLE_NODE_INDEX:-0}
+            export DD_TEST_SESSION_NAME="feedbin-ci-${NODE_INDEX}"
+            export DD_TEST_OPTIMIZATION_RUNNER_CI_NODE="${NODE_INDEX}"
+            ./bin/ddtest run --platform ruby --framework minitest
+
+workflows:
+  test:
+    jobs:
+      - test

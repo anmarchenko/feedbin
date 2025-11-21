@@ -1,0 +1,99 @@
+version: '2.1'
+setup: true
+
+orbs:
+  node: circleci/node@7
+  ruby: circleci/ruby@2
+  test-optimization-circleci-orb: datadog/test-optimization-circleci-orb@1
+  continuation: circleci/continuation@0.2.0
+
+jobs:
+  plan:
+    docker:
+      - image: cimg/ruby:3.3.0-node
+    environment:
+      RAILS_ENV: test
+      DD_ENV: ci
+      BUNDLE_PATH: vendor/bundle
+      BUNDLE_JOBS: 4
+      DD_SERVICE: feedbin-circleci
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - apt-cache-v1-{{ arch }}
+      - run:
+          name: Install system dependencies
+          command: |
+            set -eux
+            sudo apt-get update
+            sudo apt-get install --quiet --yes \
+              libffi-dev \
+              libidn11-dev \
+              libpq-dev \
+              libreadline-dev \
+              libssl-dev \
+              libvips \
+              libxml2-dev \
+              libxslt1-dev \
+              rustc \
+              zlib1g-dev
+      - name: Install pigo
+        run: |
+          set -eux
+          wget --quiet --output-document - https://github.com/esimov/pigo/releases/download/v1.4.5/pigo-1.4.5-linux-amd64.tar.gz | tar --extract --gunzip --directory=/tmp/
+          sudo mv /tmp/pigo-1.4.5-linux-amd64/pigo /usr/local/bin/
+      - save_cache:
+          key: apt-cache-v1-{{ arch }}
+          paths:
+            - /var/cache/apt
+            - /var/lib/apt
+            - /usr/local/bin
+      - ruby/install-deps
+      - node/install-packages:
+          pkg-manager: yarn
+      - test-optimization-circleci-orb/autoinstrument:
+          languages: ruby
+          site: datadoghq.eu
+      - run:
+          name: Download ddtest latest release
+          command: |
+            set -euo pipefail
+            mkdir -p bin
+            curl -fsSL https://github.com/DataDog/ddtest/releases/latest/download/ddtest-linux-amd64 -o bin/ddtest
+            chmod +x bin/ddtest
+      - run:
+          name: Plan tests with ddtest
+          command: ./bin/ddtest plan --platform ruby --framework minitest
+          environment:
+            DD_TEST_OPTIMIZATION_RUNNER_MIN_PARALLELISM: 1
+            DD_TEST_OPTIMIZATION_RUNNER_MAX_PARALLELISM: 8
+      - save_cache:
+          key: ddtest-plan-{{ .Revision }}
+          paths:
+            - .testoptimization
+            - bin/ddtest
+      - run:
+          name: Determine parallelism
+          command: |
+            set -euo pipefail
+            cat .testoptimization/parallel-runners.txt
+            desired=$(cat .testoptimization/parallel-runners.txt 2>/dev/null || echo 1)
+            if ! echo "${desired}" | grep -Eq '^[0-9]+$'; then
+              echo "Invalid parallelism value '${desired}', defaulting to 1"
+              desired=1
+            fi
+            if [ "${desired}" -lt 1 ]; then
+              echo "Parallelism must be at least 1, defaulting to 1"
+              desired=1
+            fi
+            printf '{"parallelism": %s}\n' "${desired}" > pipeline-parameters.json
+            cat pipeline-parameters.json
+      - continuation/continue:
+          configuration_path: .circleci/test.yml
+          parameters: pipeline-parameters.json
+
+workflows:
+  plan:
+    jobs:
+      - plan
