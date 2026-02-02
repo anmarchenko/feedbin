@@ -1,14 +1,4 @@
 GIT
-  remote: https://github.com/DataDog/datadog-ci-rb.git
-  revision: b07163f19627be45e0d8afdd777b0a3613ef6854
-  ref: main
-  specs:
-    datadog-ci (1.23.1)
-      datadog (~> 2.4)
-      drb
-      msgpack
-
-GIT
   remote: https://github.com/feedbin/carrierwave.git
   revision: 3cefc38b31e079da24f3e372c243b7132ba59708
   branch: feedbin
@@ -246,13 +236,6 @@ GEM
     css_parser (1.16.0)
       addressable
     dante (0.2.0)
-    datadog (2.22.0)
-      datadog-ruby_core_source (~> 3.4, >= 3.4.1)
-      libdatadog (~> 22.0.1.1.0)
-      libddwaf (~> 1.25.1.1.0)
-      logger
-      msgpack
-    datadog-ruby_core_source (3.4.1)
     date (3.3.4)
     debug (1.9.1)
       irb (~> 1.10)
@@ -366,14 +349,6 @@ GEM
       base64
     kgio (2.11.4)
     language_server-protocol (3.17.0.3)
-    libdatadog (22.0.1.1.0)
-    libdatadog (22.0.1.1.0-x86_64-linux)
-    libddwaf (1.25.1.1.0-arm64-darwin)
-      ffi (~> 1.0)
-    libddwaf (1.25.1.1.0-x86_64-darwin)
-      ffi (~> 1.0)
-    libddwaf (1.25.1.1.0-x86_64-linux)
-      ffi (~> 1.0)
     librato-metrics (1.6.2)
       aggregate (~> 0.2.2)
       faraday (>= 0.7, < 2.0)
@@ -392,7 +367,6 @@ GEM
     llhttp-ffi (0.4.0)
       ffi-compiler (~> 1.0)
       rake (~> 13.0)
-    logger (1.7.0)
     lograge (0.14.0)
       actionpack (>= 4)
       activesupport (>= 4)
@@ -717,7 +691,6 @@ DEPENDENCIES
   clockwork
   coffee-rails
   connection_pool
-  datadog-ci!
   debug
   dotenv-rails
   down
